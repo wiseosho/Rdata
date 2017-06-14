@@ -7,6 +7,37 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
+***
+>1. 통계적 비교분석 대상 및 가설설정
+>	+ 계절별(1/8월) 서울시 미세먼지(+초 미세먼지) 농도 분석\
+	
+####  Discrete Variables \	
+
+	+ Null Hypothesis (H0). 계절별(1, 8월)에 따른 서울시 전구역의 미세먼지 수준(Order) 의 차이가 없다.
+	+ Alternative Hypothesis(H1). 1월과 8월의 서울시 구역의 평균미세먼지 농도의 차이가 있다.(Not Equal)
+	
+####  Continuous Variables \
+	
+  + Null Hypothesis (H0). 계절별(1, 8월) 의 서울시 구역의 평균 미세먼지 농도의 차이가 없다. 
+  + Alternative Hypothesis (H1-1). 1월과 8월의 서울시 구역의 평균미세먼지 농도의 차이가 있다.(Not Equal) 
+  + Alternative Hypothesis (H1-2). 1월이 8월보다 서울시 전구역의 평균 미세먼지 농도가 더 크다.(Greater) 
+  + Alternative Hypothesis (H1-3). 1월이 8월보다 서울시 전구역의 평균 미세먼지 농도가 더 작다.(Less) 
+
+>2. 유의수준 \
+\
+95% , (Default value, conf.level = 0.95)\
+
+>3. 측정도구 \
+\
++ 교차분석 - 카이제곱 분석(Chi-square)\
++ t.test \
+
+>4. 데이터 수집 & 전처리\
+\
+서울 열린데이터 광장 (http://data.seoul.go.kr/)
+\
+
++ 데이터 불러오기
 ```{r}
 #load data. Used opendata in seoul-si
 #level of finedust by month, localarea
@@ -14,21 +45,32 @@ dust_data <- read.csv("./dust_seoul.csv", header = TRUE)
 head(dust_data)
 summary(dust_data)
 ```
+##>5-1. 데이터 코딩/프로그래밍 (상관관계 분석)
+
+###독립변인 추출.
++ 독립변인 : 측정월(1월, 8월)
+
 
 ```{r}
 #Extract monthly info into the month column (substr())
 dust_data$month <- substr(dust_data[,1], 5,6)
 unique(dust_data$month)
-
+names(dust_data) <- c("date","station","Co2.ppm", "Ozone.ppm", "Co.ppm", "SO3.ppm", "Fine.dust", "Ultrafine.dust","month")
 #filter by month for 01, 08 (%in%)
 dust_data_18 <- subset(dust_data, dust_data$month %in% c('01', '08') )
 length(dust_data_18)
-
 dust_data_18
 ```
 
+###상관관계 분석
+
++ ####연속값 범주화 (Nominal Variable)
++ 미세먼지 농도 분류기준에 따른 상태분류\
+ 0~30 : 'good'\
+ 31~80 : 'normal'\
+ 81~ : 'bad'\
+ 
 ```{r}
-names(dust_data_18) <- c("date","station","Co2.ppm", "Ozone.ppm", "Co.ppm", "SO3.ppm", "Fine.dust", "Ultrafine.dust","month")
 
 dust_data_soup <- dust_data_18[,c("month","Fine.dust","Ultrafine.dust")]
 dust_data_soup <- na.omit(dust_data_soup)
@@ -40,24 +82,46 @@ dust_data_soup
 
 ```
 
++ ####교차테이블(Crosstable) 생성 및 Chisquare 값 추출
++ table()
++ CrossTable from gmodels package
+
 ```{r}
+library(gmodels)
+month <- dust_data_soup$month
+finedust <- dust_data_soup$Fine.dust2
+table(month, finedust)
+CrossTable(month, finedust, chisq = TRUE)
+```
+>##6-1. 통계분석 수행(결과 해석, 상관관계 분석) \
+
+분석결과 $X^2$ 값은 216, p-value는 $1.234518*10^{-47}$ 이 나왔다. \
+이는 자유도 2, 유의수준 0.05에서의 Chi-square 값 5.991 보다 크며 p-value 또한 0.05보다 낮으므로 귀무가설(미세먼지수준과 월별 상관관계는 없다.)이 기각되고 대립가설(미세먼지수준과 월별 상관관계가 있다.)이 채택된다.
+
+>##5-2. 데이터 코딩/프로그래밍 (T-검정)
+
+####t-검정을 하기 앞서 두 비교집단(1월 미세먼지 / 8월 미세먼지)의 정규성 검사를 실시한다.
++ ####Shapiro.test
++ ####q-q plot
+
+```{r}
+#Regularity Test - shapiro test
 jan <- dust_data_soup$Fine.dust[dust_data_soup$month == '01']
 shapiro.test(jan)
 aug <- dust_data_soup$Fine.dust[dust_data_soup$month == '08']
 shapiro.test(aug)
 
+#Q-Q plot(Quantile)
+qqnorm(jan)
+qqline(jan, lty=1, col="blue")
+qqnorm(aug)
+qqline(aug, lty = 1, col = 'red')
+
+#
+#Ordered numbering.
 t.test(jan, aug, alternative = "two.sided")
 t.test(jan, aug, alternative = "greater")
 t.test(jan, aug, alternative = "less")
-```
-
-```{r}
-library(gmodels)
-month <- dust_data_soup$month
-finedust<- dust_data_soup$Fine.dust2
-table(month, finedust)
-CrossTable(month, finedust, chisq = TRUE)
-
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.

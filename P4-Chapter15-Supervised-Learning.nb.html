@@ -176,49 +176,44 @@ $(document).ready(function () {
 <p>Try executing this chunk by clicking the <em>Run</em> button within the chunk or by placing your cursor inside it and pressing <em>Ctrl+Shift+Enter</em>.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmFtZXMocmVzdWx0LmxtKVxuXG5gYGAifQ== -->
-<pre class="r"><code>names(result.lm)
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5wcm9kdWN0PC0gcmVhZC5jc3YoXCIuL1IvQmFzaWMvUGFydC1JVi9wcm9kdWN0LmNzdlwiLCBoZWFkZXIgPSBUUlVFIClcbnN0cihwcm9kdWN0KVxueSA8LSBwcm9kdWN0JFNhdGlzZmFjdGlvblxueCA8LSBwcm9kdWN0JFByb3BlclxuZGF0YWY8LSBkYXRhLmZyYW1lKHgsIHkpXG5cbnJlc3VsdC5sbSA8LSBsbShmb3JtdWxhID0geSB+IHgsIGRhdGEgPSBkYXRhZilcbnBsb3QocmVzdWx0LmxtKVxubmFtZXMocmVzdWx0LmxtKVxuYGBgIn0= -->
+<pre class="r"><code>
+product&lt;- read.csv(&quot;./R/Basic/Part-IV/product.csv&quot;, header = TRUE )
+str(product)
+y &lt;- product$Satisfaction
+x &lt;- product$Proper
+dataf&lt;- data.frame(x, y)
+
+result.lm &lt;- lm(formula = y ~ x, data = dataf)
+plot(result.lm)
+names(result.lm)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBcImNvZWZmaWNpZW50c1wiICBcInJlc2lkdWFsc1wiICAgICBcImVmZmVjdHNcIiAgICAgICBcInJhbmtcIiAgICAgICAgICBcImZpdHRlZC52YWx1ZXNcIiBcImFzc2lnblwiICAgICAgICBcInFyXCIgICAgICAgICAgICBcImRmLnJlc2lkdWFsXCIgIFxuIFs5XSBcInhsZXZlbHNcIiAgICAgICBcImNhbGxcIiAgICAgICAgICBcInRlcm1zXCIgICAgICAgICBcIm1vZGVsXCIgICAgICAgIFxuIn0= -->
-<pre><code> [1] &quot;coefficients&quot;  &quot;residuals&quot;     &quot;effects&quot;       &quot;rank&quot;          &quot;fitted.values&quot; &quot;assign&quot;        &quot;qr&quot;            &quot;df.residual&quot;  
- [9] &quot;xlevels&quot;       &quot;call&quot;          &quot;terms&quot;         &quot;model&quot;        </code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShyZXN1bHQubG0pXG5cbmBgYCJ9 -->
-<pre class="r"><code>summary(result.lm)
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzdWx0LmxtJGZpdHRlZC52YWx1ZXNcbiNBLVQgdGVzdCB3aWxsIHRlbGwgeW91IGlmIGEgc2luZ2xlIHZhcmlhYmxlIGlzIHN0YXRpc3RpY2FsbHkgc2lnbmlmaWNhbnQgYW5kIGFuIEYgdGVzdCB3aWxsIHRlbGwgeW91IGlmIGEgZ3JvdXAgb2YgdmFyaWFibGVzIGFyZSBqb2ludGx5IHNpZ25pZmljYW50LlxuaGVhZChkYXRhZiwgMSlcbnJlc2lkdWFscyhyZXN1bHQubG0pXG5oaXN0KHJlc3VsdC5sbSRyZXNpZHVhbHMpXG5zaGFwaXJvLnRlc3QocmVzdWx0LmxtJHJlc2lkdWFscylcbiMgcmVzaWR1YWxzIHNhdGlzZnkgcmVndWxhcml0eVxucmVzdWx0LmxtIDwtIGxtKGZvcm11bGEgPSB5IH4geCwgZGF0YSA9IHJlc3VsdClcbnBsb3QoZm9ybXVsYSA9IHl+eClcbmFibGluZShyZXN1bHQubG0sIGNvbD0ncmVkJylcblxuc3VtbWFyeShyZXN1bHQubG0pXG5cbmBgYCJ9 -->
+<pre class="r"><code>result.lm$fitted.values
+#A-T test will tell you if a single variable is statistically significant and an F test will tell you if a group of variables are jointly significant.
+head(dataf, 1)
+residuals(result.lm)
+hist(result.lm$residuals)
+shapiro.test(result.lm$residuals)
+# residuals satisfy regularity
+result.lm &lt;- lm(formula = y ~ x, data = result)
+plot(formula = y~x)
+abline(result.lm, col='red')
+
+summary(result.lm)
 </code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5DYWxsOlxubG0oZm9ybXVsYSA9IHkgfiB4LCBkYXRhID0gcmVzdWx0KVxuXG5SZXNpZHVhbHM6XG4gICAgIE1pbiAgICAgICAxUSAgIE1lZGlhbiAgICAgICAzUSAgICAgIE1heCBcbi0xLjk5NjY5IC0wLjI1NzQxICAwLjAwMzMxICAwLjI2NDA0ICAxLjI2NDA0IFxuXG5Db2VmZmljaWVudHM6XG4gICAgICAgICAgICBFc3RpbWF0ZSBTdGQuIEVycm9yIHQgdmFsdWUgUHIoPnx0fCkgICAgXG4oSW50ZXJjZXB0KSAgMC43Nzg4NiAgICAwLjEyNDE2ICAgNi4yNzMgMS40NWUtMDkgKioqXG54ICAgICAgICAgICAgMC43MzkyOCAgICAwLjAzODIzICAxOS4zNDAgIDwgMmUtMTYgKioqXG4tLS1cblNpZ25pZi4gY29kZXM6ICAwIOKAmCoqKuKAmSAwLjAwMSDigJgqKuKAmSAwLjAxIOKAmCrigJkgMC4wNSDigJgu4oCZIDAuMSDigJgg4oCZIDFcblxuUmVzaWR1YWwgc3RhbmRhcmQgZXJyb3I6IDAuNTMyOSBvbiAyNjIgZGVncmVlcyBvZiBmcmVlZG9tXG5NdWx0aXBsZSBSLXNxdWFyZWQ6ICAwLjU4ODEsXHRBZGp1c3RlZCBSLXNxdWFyZWQ6ICAwLjU4NjUgXG5GLXN0YXRpc3RpYzogICAzNzQgb24gMSBhbmQgMjYyIERGLCAgcC12YWx1ZTogPCAyLjJlLTE2XG4ifQ== -->
-<pre><code>
-Call:
-lm(formula = y ~ x, data = result)
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--1.99669 -0.25741  0.00331  0.26404  1.26404 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  0.77886    0.12416   6.273 1.45e-09 ***
-x            0.73928    0.03823  19.340  &lt; 2e-16 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 0.5329 on 262 degrees of freedom
-Multiple R-squared:  0.5881,    Adjusted R-squared:  0.5865 
-F-statistic:   374 on 1 and 262 DF,  p-value: &lt; 2.2e-16</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Add a new chunk by clicking the <em>Insert Chunk</em> button on the toolbar or by pressing <em>Ctrl+Alt+I</em>.</p>
 <p>When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the <em>Preview</em> button or press <em>Ctrl+Shift+K</em> to preview the HTML file).</p>
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKVGhpcyBpcyBhbiBbUiBNYXJrZG93bl0oaHR0cDovL3JtYXJrZG93bi5yc3R1ZGlvLmNvbSkgTm90ZWJvb2suIFdoZW4geW91IGV4ZWN1dGUgY29kZSB3aXRoaW4gdGhlIG5vdGVib29rLCB0aGUgcmVzdWx0cyBhcHBlYXIgYmVuZWF0aCB0aGUgY29kZS4gCgpUcnkgZXhlY3V0aW5nIHRoaXMgY2h1bmsgYnkgY2xpY2tpbmcgdGhlICpSdW4qIGJ1dHRvbiB3aXRoaW4gdGhlIGNodW5rIG9yIGJ5IHBsYWNpbmcgeW91ciBjdXJzb3IgaW5zaWRlIGl0IGFuZCBwcmVzc2luZyAqQ3RybCtTaGlmdCtFbnRlciouIAoKYGBge3J9CnByb2R1Y3Q8LSByZWFkLmNzdigiLi9SL0Jhc2ljL1BhcnQtSVYvcHJvZHVjdC5jc3YiLCBoZWFkZXIgPSBUUlVFICkKc3RyKHByb2R1Y3QpCnkgPC0gcHJvZHVjdCRTYXRpc2ZhY3Rpb24KeCA8LSBwcm9kdWN0JFByb3BlcgpkYXRhZjwtIGRhdGEuZnJhbWUoeCwgeSkKCnJlc3VsdC5sbSA8LSBsbShmb3JtdWxhID0geSB+IHgsIGRhdGEgPSBkYXRhZikKcGxvdChyZXN1bHQubG0pCm5hbWVzKHJlc3VsdC5sbSkKYGBgCgpgYGB7cn0KcmVzdWx0LmxtJGZpdHRlZC52YWx1ZXMKICNBLVQgdGVzdCB3aWxsIHRlbGwgeW91IGlmIGEgc2luZ2xlIHZhcmlhYmxlIGlzIHN0YXRpc3RpY2FsbHkgc2lnbmlmaWNhbnQgYW5kIGFuIEYgdGVzdCB3aWxsIHRlbGwgeW91IGlmIGEgZ3JvdXAgb2YgdmFyaWFibGVzIGFyZSBqb2ludGx5IHNpZ25pZmljYW50LgpoZWFkKGRhdGFmLCAxKQpyZXNpZHVhbHMocmVzdWx0LmxtKQpoaXN0KHJlc3VsdC5sbSRyZXNpZHVhbHMpCnNoYXBpcm8udGVzdChyZXN1bHQubG0kcmVzaWR1YWxzKQojIHJlc2lkdWFscyBzYXRpc2Z5IHJlZ3VsYXJpdHkKcmVzdWx0LmxtIDwtIGxtKGZvcm11bGEgPSB5IH4geCwgZGF0YSA9IHJlc3VsdCkKcGxvdChmb3JtdWxhID0geX54KQphYmxpbmUocmVzdWx0LmxtLCBjb2w9J3JlZCcpCgpzdW1tYXJ5KHJlc3VsdC5sbSkKYGBgCgpBZGQgYSBuZXcgY2h1bmsgYnkgY2xpY2tpbmcgdGhlICpJbnNlcnQgQ2h1bmsqIGJ1dHRvbiBvbiB0aGUgdG9vbGJhciBvciBieSBwcmVzc2luZyAqQ3RybCtBbHQrSSouCgpXaGVuIHlvdSBzYXZlIHRoZSBub3RlYm9vaywgYW4gSFRNTCBmaWxlIGNvbnRhaW5pbmcgdGhlIGNvZGUgYW5kIG91dHB1dCB3aWxsIGJlIHNhdmVkIGFsb25nc2lkZSBpdCAoY2xpY2sgdGhlICpQcmV2aWV3KiBidXR0b24gb3IgcHJlc3MgKkN0cmwrU2hpZnQrSyogdG8gcHJldmlldyB0aGUgSFRNTCBmaWxlKS4K</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKVGhpcyBpcyBhbiBbUiBNYXJrZG93bl0oaHR0cDovL3JtYXJrZG93bi5yc3R1ZGlvLmNvbSkgTm90ZWJvb2suIFdoZW4geW91IGV4ZWN1dGUgY29kZSB3aXRoaW4gdGhlIG5vdGVib29rLCB0aGUgcmVzdWx0cyBhcHBlYXIgYmVuZWF0aCB0aGUgY29kZS4gCgpUcnkgZXhlY3V0aW5nIHRoaXMgY2h1bmsgYnkgY2xpY2tpbmcgdGhlICpSdW4qIGJ1dHRvbiB3aXRoaW4gdGhlIGNodW5rIG9yIGJ5IHBsYWNpbmcgeW91ciBjdXJzb3IgaW5zaWRlIGl0IGFuZCBwcmVzc2luZyAqQ3RybCtTaGlmdCtFbnRlciouIAoKYGBge3J9Cgpwcm9kdWN0PC0gcmVhZC5jc3YoIi4vUi9CYXNpYy9QYXJ0LUlWL3Byb2R1Y3QuY3N2IiwgaGVhZGVyID0gVFJVRSApCnN0cihwcm9kdWN0KQp5IDwtIHByb2R1Y3QkU2F0aXNmYWN0aW9uCnggPC0gcHJvZHVjdCRQcm9wZXIKZGF0YWY8LSBkYXRhLmZyYW1lKHgsIHkpCgpyZXN1bHQubG0gPC0gbG0oZm9ybXVsYSA9IHkgfiB4LCBkYXRhID0gZGF0YWYpCnBsb3QocmVzdWx0LmxtKQpuYW1lcyhyZXN1bHQubG0pCmBgYAoKYGBge3J9CnJlc3VsdC5sbSRmaXR0ZWQudmFsdWVzCiNBLVQgdGVzdCB3aWxsIHRlbGwgeW91IGlmIGEgc2luZ2xlIHZhcmlhYmxlIGlzIHN0YXRpc3RpY2FsbHkgc2lnbmlmaWNhbnQgYW5kIGFuIEYgdGVzdCB3aWxsIHRlbGwgeW91IGlmIGEgZ3JvdXAgb2YgdmFyaWFibGVzIGFyZSBqb2ludGx5IHNpZ25pZmljYW50LgpoZWFkKGRhdGFmLCAxKQpyZXNpZHVhbHMocmVzdWx0LmxtKQpoaXN0KHJlc3VsdC5sbSRyZXNpZHVhbHMpCnNoYXBpcm8udGVzdChyZXN1bHQubG0kcmVzaWR1YWxzKQojIHJlc2lkdWFscyBzYXRpc2Z5IHJlZ3VsYXJpdHkKcmVzdWx0LmxtIDwtIGxtKGZvcm11bGEgPSB5IH4geCwgZGF0YSA9IHJlc3VsdCkKcGxvdChmb3JtdWxhID0geX54KQphYmxpbmUocmVzdWx0LmxtLCBjb2w9J3JlZCcpCgpzdW1tYXJ5KHJlc3VsdC5sbSkKCmBgYAoKQWRkIGEgbmV3IGNodW5rIGJ5IGNsaWNraW5nIHRoZSAqSW5zZXJ0IENodW5rKiBidXR0b24gb24gdGhlIHRvb2xiYXIgb3IgYnkgcHJlc3NpbmcgKkN0cmwrQWx0K0kqLgoKV2hlbiB5b3Ugc2F2ZSB0aGUgbm90ZWJvb2ssIGFuIEhUTUwgZmlsZSBjb250YWluaW5nIHRoZSBjb2RlIGFuZCBvdXRwdXQgd2lsbCBiZSBzYXZlZCBhbG9uZ3NpZGUgaXQgKGNsaWNrIHRoZSAqUHJldmlldyogYnV0dG9uIG9yIHByZXNzICpDdHJsK1NoaWZ0K0sqIHRvIHByZXZpZXcgdGhlIEhUTUwgZmlsZSkuCg==</div>
 
 
 

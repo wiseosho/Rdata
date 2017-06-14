@@ -8,6 +8,7 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
 ```{r}
+
 product<- read.csv("./R/Basic/Part-IV/product.csv", header = TRUE )
 str(product)
 y <- product$Satisfaction
@@ -21,7 +22,7 @@ names(result.lm)
 
 ```{r}
 result.lm$fitted.values
- #A-T test will tell you if a single variable is statistically significant and an F test will tell you if a group of variables are jointly significant.
+#A-T test will tell you if a single variable is statistically significant and an F test will tell you if a group of variables are jointly significant.
 head(dataf, 1)
 residuals(result.lm)
 hist(result.lm$residuals)
@@ -32,6 +33,7 @@ plot(formula = y~x)
 abline(result.lm, col='red')
 
 summary(result.lm)
+
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
