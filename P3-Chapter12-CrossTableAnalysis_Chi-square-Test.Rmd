@@ -1,0 +1,93 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+#Convert Nominal stats and Ordinal stats into numerically gauagable form
+#Contingency table(Cross table)
+#Count its frequency for each Nominal category
+
+data<- read.csv("./R/Basic/Part-III/cleanDescriptive.csv", header = TRUE, fileEncoding = "CP949")
+data
+head(data)
+
+
+```
+
+```{r}
+#Extract and reformulate interested variances (level2, pass2)
+x<- data$level2
+y<- data$pass2
+
+result <- data.frame(Level=x, Pass=y)
+dim(result)
+
+#CrossTable Analysis
+
+table(result)
+
+```
+
+```{r}
+
+#install.packages('gmodels')
+#install.packages('ggplot2')
+library(gmodels)
+library(ggplot2)
+
+#Use Example dataset inside the ggplo2 package
+CrossTable(x = diamonds$color, y = diamonds$cut)
+
+
+
+```
+
+```{r}
+#Generate Crosstable
+CrossTable(x, y)
+
+
+```
+
+```{r}
+
+CrossTable(x = diamonds$cut, y=diamonds$color, chisq= TRUE)
+
+CrossTable(x, y, chisq = TRUE)
+
+```
+
+```{r}
+data <- read.csv('./R/Basic/Part-III/homogenity.csv', header = TRUE)
+head(data)
+data <- subset(data, !is.na(survey), c(method, survey))
+#field method 2
+data$method2[data$method ==1] <- "method1"
+data$method2[data$method ==2] <- "method2"
+data$method2[data$method ==3] <- "method3"
+
+#field survey
+data$survey2[data$survey == 1] <- "very good"
+data$survey2[data$survey == 2] <- "good"
+data$survey2[data$survey == 3] <- "soso"
+data$survey2[data$survey == 4] <- "poor"
+data$survey2[data$survey == 5] <- "very poor"
+
+table(data$method2, data$survey2)
+
+#H0. There is no differences between educational methods(1,2,3) for the distribution of satisfaction survey.
+chisq.test(data$method2, data$survey2)
+#p-value 0.5865 > alpha(0.05), H0 cannot be discarded. "There is no differences between educational methods."
+
+
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).

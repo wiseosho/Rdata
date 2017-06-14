@@ -1,0 +1,94 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+# Three sample - test
+#H0. No difference between three samples
+data<- read.csv("./R/Basic/Part-III/three_sample.csv", header = TRUE)
+head(data)
+method<- data$method
+survey<- data$survey
+method; survey
+
+table(method, useNA='ifany') #count samples for each group
+table(method, survey, useNA="ifany") # count samples for each group with survey response.
+
+```
+
+```{r}
+#Three group ratio difference test(chi-square)
+
+prop.test(c(34,37,39),c(50,50,50))
+prop.test(c(34,37,39),c(50,50,50), alternative = "two.sided", conf.level = 0.95)
+#p-val -> 0.52 > 0.05, we cannot discard the result.
+# X-sqaured discard value : 5.991(df = 2, a = 0.95) > 1.2944(statistic, X-squared)
+
+
+```
+
+```{r}
+#Variance Analysis ( F-test)
+#ANOVA Analysis
+data<- read.csv("./R/Basic/Part-III/three_sample.csv", header = TRUE)
+head(data)
+
+data<- subset(data, !is.na(score), c(method, score))
+head(data)
+
+plot(data$score)
+barplot(data$score)
+boxplot(data$score)
+mean(data$score); median(data$score);quantile(data$score)
+
+```
+
+```{r}
+#There is outlier that is much larger than ususal values
+
+length(data$score)
+data2<- subset(data, score<= 14 ) # remove larger than 14.
+length(data2$score)
+
+x<- data2$score
+plot(x)
+barplot(x)
+boxplot(x)
+mean(x) ; median(x); quantile(x)
+
+
+```
+
+```{r}
+data2$method2[data2$method == 1] <- "method1"
+data2$method2[data2$method == 2] <- "method2"
+data2$method2[data2$method == 3] <- "method3"
+
+x<-table(data2$method2)
+x
+y<- tapply(data2$score, data2$method, mean)
+y
+
+df<- data.frame(method=x, score=y)
+df
+
+
+# bartlett.test / homogeneity of Variances.
+
+bartlett.test( score ~ method, data = data2)
+
+result <- aov(score ~ method2, data = data2)
+names(result)
+result
+summary(result)
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).

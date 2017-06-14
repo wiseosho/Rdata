@@ -1,0 +1,227 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+1. Factor Analysis
+  Principle Component Analysis(PCA)
+    . <- prcomp(data.frame)
+    
+  Get eigen values and vectors to aquire information of mainly contributing factors
+    . <- eigen(corr(data.frame))
+    
+  Use Factanal method.
+    . <- factanal(data.frame, factors= N, rotation="varimax") #rotation method?
+    . concept of loadings and scores.
+    
+2. Correlation Analysis
+  cor(each columns of data, method="spearman")
+  corrgram -> corrgram(data.frame, )
+  performanceanalytics -> chart.Correlation()
+
+```{r}
+s1<- c(1,2,1,2,3,4,2,3,4,5)
+s2<- c(1,3,1,2,3,4,2,4,3,4)
+s3<- c(2,3,2,3,2,3,5,3,4,2)
+s4<- c(2,4,2,3,2,3,5,3,4,1)
+s5<- c(4,5,4,5,2,1,5,2,4,3)
+s6<- c(4,3,4,4,2,1,5,2,4,2)
+name<- 1:10
+
+
+
+```
+
+```{r}
+subject<- data.frame(s1, s2, s3, s4, s5, s6)
+str(subject)
+```
+
+```{r}
+#Perform Principle Component Analysis(PCA)
+#Large SD take main component variance.
+#Prop.Var : ~PC2 take up 88% among all components.
+
+pc<- prcomp(subject)
+summary(pc)
+plot(pc)
+```
+
+```{r}
+co<- cor(subject)
+co
+en<- eigen(co)
+en
+plot(en$values, type="o")
+```
+
+```{r}
+#Fact Analysis(Factanal) Varimax is the default
+
+#factanal(dataset, factors=suggested N of factors, rotation=varimax, scores=calc.method)
+
+result<- factanal(subject, factors=2, rotation="varimax")
+result
+#p-value is <0.5, so the H0 is discarded(Not probable) and N -> 3
+# Uniqueness : The validity of each element, valid if <0.5
+# Loadings : Contribution of each element to the component interested. mean if >0.4, less explainatory if <0.4.
+# SS loadings: squared sum of each loadings. Explainatory power of each component.
+# 
+```
+
+```{r}
+#Maximum-likelihood factor analysis on a covatiance matrix or data matrix
+result<- factanal(subject, factors = 3, rotation = "varimax", scores = "regression")
+result
+# Loss of information : 1-Cumulative var, 1-0.94 ~ 0.06
+
+attributes(result)
+result$loadings
+print(result, digits=2, cutoff=0.5)
+print(result, digits=2, cutoff=0)
+```
+
+```{r}
+
+#coefficients of each sample onto the major 1:2 component is scatter plotted.
+#Contributions of each 6 subject onto the major 1,2 component is scatter plotted.
+
+
+# Scatter plot of scores and loadings of results, overlapped on a plot canvas.
+# scores are plotted using plot function , followed by loadings by layering points functions,
+# each are labed by text function right after the plot, position is above(=3) and cex is scaling constant.
+
+plot(result$scores[,c(1:2)], main="Factor scores of Factor1 and Factor2")
+text(result$scores[,1], result$scores[,2], labels = name, cex = 0.7, pos = 3, col = "blue")
+points(result$loadings[,c(1:2)], pch=10, col = "red") #pch marker type.
+text(result$loadings[,1], result$loadings[,2], labels=rownames(result$loadings), cex=0.8, pos =3, col="red")
+
+```
+
+```{r}
+#coefficients of each sample onto the major 1:3 component is scatter plotted.
+#Contributions of each 6 subject onto the major 1,3 component is scatter plotted.
+
+
+# Scatter plot of scores and loadings of results, overlapped on a plot canvas.
+# scores are plotted using plot function , followed by loadings by layering points functions,
+# each are labed by text function right after the plot, position is above(=3) and cex is scaling constant.
+
+plot(result$scores[,c(1,3)], main = "Factor1, Factor3, scores", col="blue", pch=9)
+text(result$scores[,1], result$scores[,3], labels = name, cex = 0.7, pos = 3, col = "blue")
+points(result$loadings[,c(1,3)],pch=10, col = "red")
+text(result$loadings[,c(1,3)], labels = rownames(result$loadings), col='red', cex = 0.8, pos = 2) # pos 3 -> above, 1 -> below, 2-> left, 4<- right
+
+```
+
+```{r}
+# To see the full plots of each 3 major components, adapt scatterplot3d
+
+library(scatterplot3d)
+factor1<- result$scores[,1]
+factor2<- result$scores[,2]
+factor3<- result$scores[,3]
+
+#Projection of each sample(students, test cases) onto the chosen 3 major factors
+d3<- scatterplot3d(factor1, factor2, factor3, type='p')
+
+loadings1<- result$loadings[,1]
+loadings2<- result$loadings[,2]
+loadings3<- result$loadings[,3]
+
+#Projection of each previous component(6 subjects) onto the chosen 3 major factors, marked as red
+d3$points3d(loadings1, loadings2, loadings3, bg='red', pch=21, cex=2, type='h')
+
+```
+
+```{r}
+loadings<- result$loadings
+dim(loadings)
+dim(subject)
+
+fapp_sci<- numeric()
+fsoc_sci<- numeric()
+fnat_sci<- numeric()
+
+for ( i in 1:nrow(subject)){ #10 samples
+  fs1_sum<- 0;fs2_sum<-0;fs3_sum<-0 # variable where each factor projection will be stored.
+  
+  for (j in 1:ncol(subject)){ # 6 subjects
+    fs1_sum<-fs1_sum + (loadings[j,1] * subject[i, j])
+    fs2_sum<- fs2_sum + (loadings[j, 2] * subject[i, j])
+    fs3_sum<- fs3_sum + (loadings[j, 3] * subject[i, j])
+  }
+  
+  fapp_sci[i]<- fs1_sum
+  fsoc_sci[i]<- fs2_sum
+  fnat_sci[i]<- fs3_sum
+}
+
+fapp_sci
+fsoc_sci
+fnat_sci
+
+```
+
+```{r}
+# SUSPEND FOR INSUFFICIENT DATA
+#Filter elements by observing falsely categoized element.
+#inspect loadings and eliminate ones oppose the hypothesis(grouping)
+#bring data from SPSS file
+
+
+#install.packages("memisc")
+
+
+# library(memisc)
+# setwd("./R/Basic/Part-IV")
+# data.spss<- as.data.set(spss.system.file('./R/Basic/Part-IV/drinking_water.csv'))
+# data.spss<- read.csv('./R/Basic/Part-IV/drinking_water.csv', header = FALSE)
+# data.spss
+# 
+# drinking_water<- data.spss[1:11]
+# #convert into the data.frame.
+# drinking_water_df <- as.data.frame(data.spss[1:11])
+# str(drinking_water_df)
+# result2<- factanal(drinking_water_df, factors = 3, rotation = "varimax")
+# result2
+
+```
+
+```{r}
+result<- read.csv("./R/Basic/Part-IV/product.csv", header = TRUE)#skip = 1)
+head(result)
+summary(result)
+
+sd(result$Familiarity); sd(result$Proper); sd(result$Satisfaction)
+help(cor)
+cor(result$Familiarity, result$Proper)
+cor(result$Familiarity, result$Satisfaction)
+cor(result$Proper, result$Satisfaction)
+cor(result, method="pearson") 
+```
+
+```{r}
+#install.packages("corrgram")
+#Represent the degree of correlations by the color density.
+#show numeric value at the half of diagram.
+library(corrgram)
+corrgram(result)
+corrgram(result, upper.panel = panel.conf)
+corrgram(result, lower.panel = panel.conf)
+```
+
+```{r}
+#install.packages("PerformanceAnalytics")
+library(PerformanceAnalytics)
+chart.Correlation(result, histogram=, pch="+")
+cor(result, method="spearman")
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
