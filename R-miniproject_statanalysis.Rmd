@@ -3,7 +3,7 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code  within the notebook, the results appear beneath the code. 
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
@@ -45,7 +45,7 @@ dust_data <- read.csv("./dust_seoul.csv", header = TRUE)
 head(dust_data)
 summary(dust_data)
 ```
-##>5-1. 데이터 코딩/프로그래밍 (상관관계 분석)
+>##5-1. 데이터 코딩/프로그래밍 (상관관계 분석)
 
 ###독립변인 추출.
 + 독립변인 : 측정월(1월, 8월)
@@ -74,12 +74,13 @@ dust_data_18
 
 dust_data_soup <- dust_data_18[,c("month","Fine.dust","Ultrafine.dust")]
 dust_data_soup <- na.omit(dust_data_soup)
+dust_data_soup$Fine.dust2 <- factor(NA, levels = c(1,2,3), labels = c('good','normal','bad'))
 dust_data_soup$Fine.dust2[dust_data_soup$Fine.dust <=30] <- 'good'
 dust_data_soup$Fine.dust2[dust_data_soup$Fine.dust >=31 & dust_data_soup$Fine.dust <=80] <- 'normal'
 dust_data_soup$Fine.dust2[dust_data_soup$Fine.dust >=81 & dust_data_soup$Fine.dust <=150] <- 'bad'
 dust_data_soup$Fine.dust2[dust_data_soup$Fine.dust >=151 ] <- 'bad'
 dust_data_soup
-
+pie(table(dust_data_soup$Fine.dust2))
 ```
 
 + ####교차테이블(Crosstable) 생성 및 Chisquare 값 추출
@@ -91,6 +92,8 @@ library(gmodels)
 month <- dust_data_soup$month
 finedust <- dust_data_soup$Fine.dust2
 table(month, finedust)
+prop.table(table(month, finedust), margin = 1)*100
+chisq.test(month, finedust)
 CrossTable(month, finedust, chisq = TRUE)
 ```
 >##6-1. 통계분석 수행(결과 해석, 상관관계 분석) \
@@ -100,7 +103,7 @@ CrossTable(month, finedust, chisq = TRUE)
 
 >##5-2. 데이터 코딩/프로그래밍 (T-검정)
 
-####t-검정을 하기 앞서 두 비교집단(1월 미세먼지 / 8월 미세먼지)의 정규성 검사를 실시한다.
+###정규성 검사(1월 미세먼지 / 8월 미세먼지)
 + ####Shapiro.test
 + ####q-q plot
 
@@ -116,14 +119,27 @@ qqnorm(jan)
 qqline(jan, lty=1, col="blue")
 qqnorm(aug)
 qqline(aug, lty = 1, col = 'red')
+```
 
+###t.test함수를 사용, t-검정
++ ####H0. 계절별(1, 8월) 의 서울시 구역의 평균 미세먼지 농도의 차이가 없다.
++ ####H1. 1월과 8월의 서울시 구역의 평균미세먼지 농도의 차이가 있다.(Not Equal)
++ ####H1. 1월이 8월보다 서울시 전구역의 평균 미세먼지 농도가 더 크다.(Greater)
++ ####H1. 1월이 8월보다 서울시 전구역의 평균 미세먼지 농도가 더 작다.(Less)
+
+```{r}
 #
 #Ordered numbering.
 t.test(jan, aug, alternative = "two.sided")
 t.test(jan, aug, alternative = "greater")
 t.test(jan, aug, alternative = "less")
 ```
+>##6-2. 통계분석 수행(결과 해석,t-test)
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
++ 양측검정에서 p값이 유의수준(0.05)보다 매우 적게 나왔으므로, 귀무가설(차이가 없다.)이 기각되고, 대립가설(1,8월간 미세먼지농도 평균이 같지 않다.)이 채택된다.
++ 단측검정(greater)에서 p값이 유의수준(0.05)보다 매우 적게 나왔으므로, 귀무가설(1월미세먼지농도평균값이 8월보다 크지 않다.)이 기각되고, 대립가설(1월이 8월보다 미세먼지농도 평균값이 더 크다.)이 채택된다.
++ 단측검정(less)에서 p값이 유의수준(0.05)보다 매우 크게(~1) 나왔으므로, 귀무가설(1월미세먼지농도평균값이 8월보다 적지 않다.)을 기각할 수 없다.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+>##7. 분석결과 보고서
+
+###별도 첨부파일 참조(Rminiproject7-Report.pdf)
