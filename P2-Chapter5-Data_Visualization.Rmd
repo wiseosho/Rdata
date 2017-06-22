@@ -6,15 +6,203 @@ output: html_notebook
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
-
+>#1. Discrete Values
+>##1-1. Barplot
 ```{r}
+
 chart_data <- round(runif(10,100,1000))
 names(chart_data) <- c("2014-1","2015-1","2014-2", "2015-2","2014-3","2015-3","2014-4","2015-4","2017-3","2017-2")
 pie(chart_data)
 barplot(chart_data)
 #help(barplot)
-barplot(chart_data, ylim=c(0,600), ylab = "Sales(won)", xlab = "Quarterly",col = rainbow(8), main= "Quarterly Sales Comp")
-barplot(chart_data, ylim = c(0, )
+barplot(chart_data, ylim=c(0,max(chart_data)*1.1), ylab = "Sales(won)", xlab = "Quarterly",col = rainbow(8), main= "Quarterly Sales Comp")
+
+barplot(chart_data, xlim=c(0,max(chart_data)*1.1), horiz=TRUE, xlab = "Sales", ylab= "Quarterly", col = rainbow(8), main =" Comparison")
+
+barplot(chart_data, xlim=c(0,max(chart_data)*1.1), horiz=TRUE, xlab = "Sales", ylab= "Quarterly", col = rainbow(8), main =" Comparison", space = 1, cex.names = 0.8)
+
+barplot(chart_data, xlim=c(0,max(chart_data)*1.1), horiz=TRUE, xlab = "Sales", ylab= "Quarterly", main =" Comparison", space = 1, cex.names = 0.8, col = rep(c("red","green"), 4) )
+
+barplot(chart_data, xlim=c(0, max(chart_data)*1.1), horiz=TRUE, xlab= "Sales", ylab= "QUartely", main = "Compartison", space = 2, cex.names = 1, col = rep(c(2,4), 4))
+
+```
+>##1-2. Cumulated Barplots and align plots
+```{r}
+#Cumulated Barplot
+data("VADeaths")
+VADeaths
+str(VADeaths)
+class(VADeaths)
+mode(VADeaths)
+
+
+```
+
+
+```{r}
+par(mfrow = c(1,2))
+barplot(VADeaths, beside= T, col = rainbow(5), main="Death Rate of Varginia")
+#legend(loc(x), loc(y), vector(legends), cex = , fill = rainbow(5))
+legend(19, 71, dimnames(VADeaths)[[1]], cex = 0.6, fill = rainbow(5))
+
+barplot(VADeaths, beside= F, col = rainbow(5))
+#legend(loc(x), loc(y), vector(legends), cex = , fill = rainbow(5))
+title(main = "Death Rate of Virginia", font.main = 4)
+legend(3.8, 200, dimnames(VADeaths)[[1]], cex = 0.6, fill = rainbow(5))
+
+```
+>##1-3. Dot-Chart, Pie-Chart (labeling)
++ dot chart : lcolor, pch, labels = names(~), cex : Character expansion
++ Pie chart : 
+```{r}
+par(mfrow = c(1,1))
+dotchart(chart_data, color = c("green", "red"), lcolor = "blue", pch = 1:2, labels = names(chart_data), xlab = "Sales", main ="guess what", cex = 1.2)
+
+pie(chart_data, labels = names(chart_data), col = rainbow(8), cex = 1.2)
+title("Sales")
+```
+>#2. Continuous Variables
+
+>##2-1. Boxplot
+```{r}
+boxplot(VADeaths, range =0)
+rng <- range(VADeaths)
+boxplot(VADeaths, range = 0, ylim = c(rng[1]*0.8, rng[2]*1.1) , notch = T) #apply notch
+abline(h=37, lty=3, col = "red") # horizental line, linetype, color
+
+
+```
+>##2-2 Histogram
+
+```{r}
+data(iris)
+names(iris)
+str(iris)
+head(iris)
+
+summary(iris$Sepal.Length)
+hist(iris$Sepal.Length, xlab = "iris$Sepal.Length", col = "magenta", main='iris sepal.length', xlim = range(iris$Sepal.Length))
+summary(iris$Sepal.Width)
+
+par(mfrow=c(1,2))
+hist(iris$Sepal.Width, xlab = "iris$Sepal.Width", col = "green", main = "iris Sepal.Width", xlim = range(iris$Sepal.Width))
+hist(iris$Sepal.Width, xlab = "iris$Sepal.Width", col = "mistyrose", main = "iris Sepal.Width", xlim = range(iris$Sepal.Width), freq = F)
+lines(density(iris$Sepal.Width), col = 'red')
+
+#
+#hist(jan, freq = F, col = "magenta", xlab = "Finedust", ylab='density', main = "Finedust")
+#lines(density(jan), col = 'red')
+```
+
+```{r}
+par(mfrow=c(1,2))
+hist(iris$Sepal.Width, xlab = 'iris.sepal.width', col = 'mistyrose', freq = F, main = "width hist", xlim = range(iris$Sepal.Width))
+lines(density(iris$Sepal.Width), col = 'red')
+lines(dnorm(x, mean = mean(iris$Sepal.Width), sd = sd(iris$Sepal.Width)), col = 'blue')
+#???
+#dnorm(..._) pass in the expression of x(f(x)), not the vector of constant variables,
+#curve takes expression into account and get value from specified range
+curve(dnorm(x, mean = mean(iris$Sepal.Width), sd = sd(iris$Sepal.Width)), col = 'blue', add=TRUE)
+
+
+```
+>##2-3. Scatter Plot
+
+
+```{r}
+price <- runif(10, min=1, max =100)
+plot(price, col = 'red')
+
+
+par(new = T)
+line_chart = 1:100
+plot(line_chart, type='l', col='red', axis=F, ann=F)
+text(70,80, 'adddiag', col = 'black')
+
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(price, type = 'l')
+plot(price, type = 'o')
+plot(price, type = 'h')
+plot(price, type = 's')
+
+
+```
+
+```{r}
+par(mfrow=c(2,3))
+plot(price, type='o', pch = 5)
+plot(price, type='o', pch = 10)
+plot(price, type='o', pch = 15)
+plot(price, type='o', pch = 20, col = 'orange', cex = 1.5)
+plot(price, type='o', pch = 20, col = 'green', cex = 2.0, lwd = 3) # lwd: line width(add line)
+```
+###2-3 Overlapped scatter plot
+
+```{r}
+x<- c(1,2,3,4,2,4)
+y<- rep(2,6)
+x;y
+table(x,y)
+plot(x, y)
+xy.df <- as.data.frame(table(x,y))
+xy.df
+#sort data uniquely and re formulate into data frame.
+plot(x, y, pch = '@', col='blue', cex = 0.5*xy.df$Freq, xlab = 'vector y', ylab = 'vector y')
+
+
+```
+>###Visualize Overlapping data from galton dataset.
+```{r}
+#1. Load from data set.
+library(psych)
+data(galton)
+#2. Convert raw data into table form(count) and again convert into the data.frame format that add frequency column
+
+galtonData <- as.data.frame(table(galton$child, galton$parent))
+head(galtonData)
+str(galtonData)
+
+#3. Extract by column
+names(galtonData) = c("child", "parent", "freq")
+head(galtonData)
+parent<- as.numeric(galtonData$parent)
+child <- as.numeric(galtonData$child)
+plot(parent, child, pch=21, col = 'blue', bg = 'green', cex = 0.2*galtonData$freq, xlab = 'parent', ylab = 'child')
+
+```
+
+###Comparison between variables and visualizations
+
++ #### Correlation chart
+
+```{r}
+
+attributes(iris)
+data(iris)
+pairs(iris[,1:4])
+unique(iris$Species)
+pairs(iris[iris$Species == "virginica", 1:4])
+pairs(iris[iris$Species == "versicolor", 1:4])
+pairs(iris[iris$Species == "setosa", 1:4])
+```
+## 3D scatter plot
+
+```{r}
+library(scatterplot3d)
+levels(iris$Species)
+iris_setosa<- iris[iris$Species == 'setosa',]
+iris_versicolor <- iris[iris$Species == 'versicolor',]
+iris_virginica <- iris[iris$Species == 'virginica',]
+
+d3<- scatterplot3d(iris$Petal.Length, iris$Sepal.Length, iris$Sepal.Width, type = 'n')
+#d3$points3d(1:5,1:5,1:5, bg = 'orange', pch = 21)
+d3$points3d(iris_setosa$Petal.Length, iris_setosa$Sepal.Length, iris_setosa$Sepal.Width, bg = 'orange', pch = 21)
+d3$points3d(iris_versicolor$Petal.Length, iris_versicolor$Sepal.Length, iris_versicolor$Sepal.Width, bg = 'blue', pch = 23)
+d3$points3d(iris_virginica$Petal.Length, iris_virginica$Sepal.Length, iris_virginica$Sepal.Width, bg = 'green', pch = 25)
+
 
 ```
 
